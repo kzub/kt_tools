@@ -157,5 +157,6 @@ keepteamGetEmployees(function (err, results) {
   }
   fs.writeFileSync('keepteam_data.json', JSON.stringify(results, null, 2));
   console.log('Well done! Use case:')
-  console.log(`cat keepteam_data.json | jq '.[]|.Brief.FirstName + " " + .Brief.LastName + "," + .Brief.Department.Name + "," +  .Brief.Position.Name + "," + (.Details.Person.Contacts|reduce .[] as $item (""; . + $item.Value + ","))'`);
+  console.log(`#all: cat keepteam_data.json | jq -r '.[]|.Brief.FirstName + " " + .Brief.LastName + ";" + .Brief.Department.Name + ";" +  .Brief.Position.Name + ";" + (.Details.Person.Contacts|map(select(.Type.Name == "E-mail")))[0].Value + ";" + (.Details.Person.Contacts|map(select(.Type.Name == "Мобильный телефон")))[0].Value'`);
+  console.log(`#active: cat keepteam_data.json | jq -r '.[]|select(.Brief.IsActive == true)|.Brief.FirstName + " " + .Brief.LastName + ";" + .Brief.Department.Name + ";" +  .Brief.Position.Name + ";" + (.Details.WorkInfo.EmploymentHistory|last|.Branch.Name) + ";" + (.Details.Person.Contacts|map(select(.Type.Name == "E-mail")))[0].Value + ";" + (.Details.Person.Contacts|map(select(.Type.Name == "Мобильный телефон")))[0].Value'`);
 });
